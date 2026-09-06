@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TaskFlow | Smart Task Manager</title>
+
+    <meta
+        name="description"
+        content="TaskFlow is a modern task management application with local storage, filtering, priorities and progress tracking."
+    >
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ================= BACKGROUND ================= -->
+
+    <div class="background">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+
+        <div class="stars"></div>
+    </div>
+
+
+    <!-- ================= APP ================= -->
+
+    <main class="app">
+
+        <!-- ================= HEADER ================= -->
+
+        <header class="header">
+
+            <div class="brand">
+
+                <div class="logo">
+                    ✓
+                </div>
+
+                <div class="brand-text">
+                    <h1>TaskFlow</h1>
+                    <p>Organize your day. Get things done.</p>
+                </div>
+
+            </div>
+
+            <div class="header-date" id="currentDate"></div>
+
+        </header>
+
+
+        <!-- ================= STATISTICS ================= -->
+
+        <section class="stats-grid">
+
+            <div class="card stat-card">
+                <div class="stat-label">Total Tasks</div>
+                <div class="stat-value" id="totalTasks">0</div>
+                <div class="stat-sub">All your tasks</div>
+            </div>
+
+            <div class="card stat-card">
+                <div class="stat-label">Active</div>
+                <div class="stat-value" id="activeTasks">0</div>
+                <div class="stat-sub">Tasks remaining</div>
+            </div>
+
+            <div class="card stat-card">
+                <div class="stat-label">Completed</div>
+                <div class="stat-value" id="completedTasks">0</div>
+                <div class="stat-sub">Tasks finished</div>
+            </div>
+
+            <div class="card stat-card">
+                <div class="stat-label">Progress</div>
+                <div class="stat-value" id="progressText">0%</div>
+                <div class="stat-sub">Overall completion</div>
+            </div>
+
+        </section>
+
+
+        <!-- ================= MAIN GRID ================= -->
+
+        <div class="main-grid">
+
+            <!-- ================= TASK AREA ================= -->
+
+            <section class="card task-section">
+
+                <div class="section-heading">
+
+                    <div>
+                        <h2>My Tasks</h2>
+                        <p>Plan, track and complete your daily tasks.</p>
+                    </div>
+
+                </div>
+
+
+                <!-- ================= ADD TASK ================= -->
+
+                <form class="task-form" id="taskForm">
+
+                    <input
+                        type="text"
+                        id="taskInput"
+                        class="task-input"
+                        placeholder="What needs to be done?"
+                        autocomplete="off"
+                        required
+                    >
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        + Add Task
+                    </button>
+
+                </form>
+
+
+                <!-- ================= TOOLBAR ================= -->
+
+                <div class="toolbar">
+
+                    <div class="filters">
+
+                        <button
+                            type="button"
+                            class="filter-btn active"
+                            data-filter="all"
+                        >
+                            All
+                        </button>
+
+                        <button
+                            type="button"
+                            class="filter-btn"
+                            data-filter="active"
+                        >
+                            Active
+                        </button>
+
+                        <button
+                            type="button"
+                            class="filter-btn"
+                            data-filter="completed"
+                        >
+                            Completed
+                        </button>
+
+                    </div>
+
+
+                    <div class="controls">
+
+                        <div class="search-wrapper">
+                            <input
+                                type="text"
+                                id="searchInput"
+                                class="search-input"
+                                placeholder="Search tasks..."
+                                autocomplete="off"
+                            >
+                        </div>
+
+                        <select
+                            id="sortSelect"
+                            class="select-input"
+                        >
+                            <option value="newest">Newest</option>
+                            <option value="oldest">Oldest</option>
+                            <option value="priority">Priority</option>
+                            <option value="dueDate">Due Date</option>
+                            <option value="alphabetical">A-Z</option>
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================= TASK LIST ================= -->
+
+                <div
+                    id="taskList"
+                    class="task-list"
+                ></div>
+
+            </section>
+
+
+            <!-- ================= SIDE PANEL ================= -->
+
+            <aside class="side-panel">
+
+
+                <!-- ================= PROGRESS ================= -->
+
+                <div class="card side-card progress-card">
+
+                    <div class="side-title">
+                        Daily Progress
+                    </div>
+
+                    <div class="progress-wrapper">
+
+                        <div class="progress-center">
+
+                            <svg
+                                class="progress-ring"
+                                viewBox="0 0 150 150"
+                            >
+
+                                <circle
+                                    class="progress-ring-bg"
+                                    cx="75"
+                                    cy="75"
+                                    r="65"
+                                ></circle>
+
+                                <circle
+                                    class="progress-ring-fill"
+                                    id="progressRing"
+                                    cx="75"
+                                    cy="75"
+                                    r="65"
+                                ></circle>
+
+                            </svg>
+
+                            <div
+                                class="progress-value"
+                                id="progressValue"
+                            >
+                                0%
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="progress-label">
+                        Tasks completed
+                    </div>
+
+                </div>
+
+
+                <!-- ================= PRIORITIES ================= -->
+
+                <div class="card side-card">
+
+                    <div class="side-title">
+                        Priority Overview
+                    </div>
+
+                    <div class="priority-list">
+
+                        <div class="priority-row">
+
+                            <div class="priority-left">
+                                <span class="priority-dot low"></span>
+                                Low Priority
+                            </div>
+
+                            <span
+                                class="priority-count"
+                                id="lowCount"
+                            >
+                                0
+                            </span>
+
+                        </div>
+
+
+                        <div class="priority-row">
+
+                            <div class="priority-left">
+                                <span class="priority-dot medium"></span>
+                                Medium Priority
+                            </div>
+
+                            <span
+                                class="priority-count"
+                                id="mediumCount"
+                            >
+                                0
+                            </span>
+
+                        </div>
+
+
+                        <div class="priority-row">
+
+                            <div class="priority-left">
+                                <span class="priority-dot high"></span>
+                                High Priority
+                            </div>
+
+                            <span
+                                class="priority-count"
+                                id="highCount"
+                            >
+                                0
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================= QUICK ACTIONS ================= -->
+
+                <div class="card side-card">
+
+                    <div class="side-title">
+                        Quick Actions
+                    </div>
+
+                    <div class="quick-actions">
+
+                        <button
+                            type="button"
+                            class="quick-btn"
+                            id="clearCompleted"
+                        >
+                            Clear Completed
+                        </button>
+
+                        <button
+                            type="button"
+                            class="quick-btn"
+                            id="clearAll"
+                        >
+                            Clear All
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </aside>
+
+        </div>
+
+
+        <div class="footer-text">
+            TaskFlow • Your tasks, your progress, your productivity.
+        </div>
+
+    </main>
+
+
+    <!-- ================= EDIT MODAL ================= -->
+
+    <div
+        class="modal-overlay"
+        id="modalOverlay"
+    >
+
+        <div class="modal">
+
+            <div class="modal-header">
+
+                <h3>Edit Task</h3>
+
+                <button
+                    type="button"
+                    class="modal-close"
+                    id="closeModal"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <div class="form-group">
+
+                    <label
+                        class="form-label"
+                        for="editTitle"
+                    >
+                        Task Title
+                    </label>
+
+                    <input
+                        type="text"
+                        id="editTitle"
+                        class="form-control"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label
+                        class="form-label"
+                        for="editDescription"
+                    >
+                        Description
+                    </label>
+
+                    <textarea
+                        id="editDescription"
+                        class="form-control"
+                        placeholder="Add some details..."
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label
+                        class="form-label"
+                        for="editPriority"
+                    >
+                        Priority
+                    </label>
+
+                    <select
+                        id="editPriority"
+                        class="form-control"
+                    >
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label
+                        class="form-label"
+                        for="editDueDate"
+                    >
+                        Due Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="editDueDate"
+                        class="form-control"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    id="cancelEdit"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    id="saveEdit"
+                >
+                    Save Changes
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= TOAST ================= -->
+
+    <div
+        class="toast"
+        id="toast"
+    ></div>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
